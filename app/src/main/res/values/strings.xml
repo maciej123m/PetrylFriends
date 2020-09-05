@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">PetrylFriends</string>
+    <string name="action_settings">Settings</string>
+    <string name="edit_text_hint">Napisz coś...</string>
+    <string name="hint_button">Wyślij</string>
+    <string name="content_avatar">avatar</string>
+
+    <string name="login_text">Witaj!\nZaloguj się przez swoje konto google aby skorzystać z aplikacji!</string>
+    <string name="login_with_google">Login with Google</string>
+</resources>

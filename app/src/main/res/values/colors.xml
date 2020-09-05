@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3B3E43</color>
+    <color name="colorPrimaryDark">#2D2F32</color>
+    <color name="colorAccent">#808080</color>
+
+    <color name="background_color">#323B3D</color>
+    <color name="text_color">#F2F2F2</color>
+    <color name="un_send_text_color">#656565</color>
+    <color name="text_nick_color">#7A7A7A</color>
+    <color name="hint_text">#777777</color>
+    <color name="background_message_color">#292B2B</color>
+    <color name="EditText_color">#44474A</color>
+    <color name="send_button_color">#88888E</color>
+</resources>
