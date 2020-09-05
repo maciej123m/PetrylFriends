@@ -218,7 +218,7 @@ class MainFragment : Fragment() {
                             while(item.first==null) {
                                 try {
                                     //usypianie wątką na 50milis
-                                    Thread.sleep(50);
+                                    Thread.sleep(50)
                                 } catch (e: InterruptedException) {
                                     Log.d("","")
                                 }
@@ -243,6 +243,7 @@ class MainFragment : Fragment() {
                     TODO("akcja przy zwróceniu isSuccessful - false")
                 }
             }.addOnCanceledListener {
+                Log.d("","")
                 TODO("akcja przy braku internetu?")
             }
         }).start()

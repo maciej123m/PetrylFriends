@@ -26,13 +26,42 @@ import java.lang.Exception
 
 class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
 
+    //zmienna odpowiadająca za sprawdzanie czy klient jest online czy offline
+    val connectedRef by lazy {
+        database.getReference(".info/connected")
+    }
+
+    val connectedListener by lazy {
+        (object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                val connected = snapshot.getValue(Boolean::class.java) ?: false
+                if (connected) {
+                    //TODO("akcja kiedy jest połączony")
+                } else {
+                    //TODO("akcja kiedy jest rozłączony")
+                    Log.d("","")
+                }
+            }
+
+        })
+
+    }
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        database.setPersistenceEnabled(true)
+
         super.onCreate(savedInstanceState)
+
         messages = ArrayList()
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
-
         //tablica użytkowników
         cacheUser = ArrayList()
         unSendMessage = ArrayList()
@@ -60,19 +89,26 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
 
     override fun onResume() {
         super.onResume()
-        if(mAuth.currentUser!=null)
+        if (mAuth.currentUser != null) {
             onStartListener()
+
+            //odpowiada za to czy użytkownik jest offline czy online
+            connectedRef.addValueEventListener(connectedListener)
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        if(mAuth.currentUser!=null)
+        if (mAuth.currentUser != null) {
             reference.removeEventListener(childEventListener)
+            connectedRef.removeEventListener(connectedListener)
+        }
+
     }
 
     private val childEventListener = (object : ChildEventListener {
         override fun onCancelled(error: DatabaseError) {
-            TODO("ogarnij jakąś akcje jak jest anulowane")
+            //TODO("ogarnij jakąś akcje jak jest anulowane")
             Log.d(MainActivity::class.toString(),"e: $error")
         }
 
@@ -83,7 +119,7 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
         }
 
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-            var pos : Int = 0
+            var pos  = 0
             try {
                 val item = snapshot.getValue(Message::class.java)!!
                 for (message in messages) {
@@ -164,7 +200,7 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
 
 
         fun generateBitmap(url : String): Bitmap {
-            var bitmap : Bitmap? = null
+            val bitmap : Bitmap?
 
             bitmap = try {
                 Picasso.get().load(url).resize(65,65).get()
@@ -173,10 +209,10 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
                 val inputStream : InputStream = context.assets!!.open("img/error.jpg")
 
                 //tworzenie streama
-                val bStream =  BufferedInputStream(inputStream);
+                val bStream =  BufferedInputStream(inputStream)
 
                 //dekodowanie do bitmapy
-                BitmapFactory.decodeStream(bStream);
+                BitmapFactory.decodeStream(bStream)
             }
 
             return bitmap!!
@@ -190,7 +226,7 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
-                if (MainActivity.messages.count() != 0) {
+                if (messages.count() != 0) {
                     reference.addChildEventListener(childEventListener)
                     return
                 }

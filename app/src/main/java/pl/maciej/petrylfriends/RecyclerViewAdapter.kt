@@ -1,25 +1,23 @@
 package pl.maciej.petrylfriends
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import java.io.BufferedInputStream
 import java.io.InputStream
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+
 
 class RecyclerViewAdapter(val context: Context) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
 
@@ -36,7 +34,10 @@ class RecyclerViewAdapter(val context: Context) : RecyclerView.Adapter<RecyclerV
     override fun getItemCount(): Int {
        return Messages.size
     }
-    object lock
+
+    //formatowanie daty
+    private val dataFormat = "E HH:mm"
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         //sprawdza czy lista niewysłanych wiadomości nie jest pusta, czy się zgadza token i czy jest element ten na liście niewysłanych wiadomości
         if (MainActivity.unSendMessage.count() != 0 && Messages[position].tokenID == MainActivity.mAuth.currentUser!!.uid && isOnList(position)) {
@@ -48,6 +49,12 @@ class RecyclerViewAdapter(val context: Context) : RecyclerView.Adapter<RecyclerV
         holder.view.findViewById<TextView>(R.id.nick).text = Messages[position].author
         val text = holder.view.findViewById<TextView>(R.id.textViewMain)
         text.text = Messages[position].message
+
+        //ustawianie daty
+        val formatter = SimpleDateFormat(dataFormat, Locale.getDefault())
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = Messages[position].time
+        holder.view.findViewById<TextView>(R.id.date).text = formatter.format(calendar.time)
 
         if (Messages[position].tokenID == MainActivity.mAuth.currentUser!!.uid) {
             holder.view.findViewById<ImageView>(R.id.avatarView).setImageBitmap(MainActivity.photo)
@@ -61,9 +68,9 @@ class RecyclerViewAdapter(val context: Context) : RecyclerView.Adapter<RecyclerV
 
             val inputStream : InputStream = MainActivity.context.assets!!.open("img/error.jpg")
             //tworzenie streama
-            val bStream =  BufferedInputStream(inputStream);
+            val bStream =  BufferedInputStream(inputStream)
             //dekodowanie do bitmapy
-            val b = BitmapFactory.decodeStream(bStream);
+            val b = BitmapFactory.decodeStream(bStream)
             holder.view.findViewById<ImageView>(R.id.avatarView).setImageBitmap(b)
 
             var user : UserData? = null
@@ -104,7 +111,6 @@ class RecyclerViewAdapter(val context: Context) : RecyclerView.Adapter<RecyclerV
                         MainActivity.cacheUser.add(user!!)
                     }
                 }
-
             })
         }
     }
@@ -123,9 +129,9 @@ class RecyclerViewAdapter(val context: Context) : RecyclerView.Adapter<RecyclerV
         val inputStream : InputStream = MainActivity.context.assets!!.open("img/error.jpg")
 
         //tworzenie streama
-        val bStream =  BufferedInputStream(inputStream);
+        val bStream =  BufferedInputStream(inputStream)
 
         //dekodowanie do bitmapy
-        return BitmapFactory.decodeStream(bStream);
+        return BitmapFactory.decodeStream(bStream)
     }
 }
