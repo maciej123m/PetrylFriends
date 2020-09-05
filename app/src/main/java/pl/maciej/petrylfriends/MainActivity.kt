@@ -9,10 +9,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat
-import androidx.core.view.get
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
@@ -27,24 +26,60 @@ import java.lang.Exception
 class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
 
     //zmienna odpowiadająca za sprawdzanie czy klient jest online czy offline
-    val connectedRef by lazy {
+    private val connectedRef by lazy {
         database.getReference(".info/connected")
     }
 
-    val connectedListener by lazy {
+    private val connectedListener by lazy {
         (object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
+                TODO("nie ma dostępu do bazy")
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
-
                 val connected = snapshot.getValue(Boolean::class.java) ?: false
                 if (connected) {
-                    //TODO("akcja kiedy jest połączony")
+                    //kiedy jest internet
+
+                    //załadowanie animacji
+                    val animation = AnimationUtils.loadAnimation(context,R.anim.slide_to_top)
+                    animation.setAnimationListener(object: Animation.AnimationListener{
+                        override fun onAnimationRepeat(animation: Animation?) {
+                        }
+
+                        override fun onAnimationEnd(animation: Animation?) {
+                            //chowa pod koniec animacji cardview
+                            cardViewInternet.visibility = View.GONE
+                        }
+
+                        override fun onAnimationStart(animation: Animation?) {
+                        }
+
+                    })
+                    //start animacji
+                    cardViewInternet.startAnimation(animation)
                 } else {
-                    //TODO("akcja kiedy jest rozłączony")
-                    Log.d("","")
+                    //kiedy nie ma internetu
+
+                    //załadowanie animacji
+                    if (ready) {
+                        val animation = AnimationUtils.loadAnimation(context,R.anim.slide_from_top)
+                        animation.setAnimationListener(object: Animation.AnimationListener{
+                            override fun onAnimationRepeat(animation: Animation?) {
+                            }
+
+                            override fun onAnimationEnd(animation: Animation?) {
+                            }
+
+                            override fun onAnimationStart(animation: Animation?) {
+                                //pojawienie się cardview
+                                cardViewInternet.visibility = View.VISIBLE
+                            }
+
+                        })
+                        //start animacji
+                        cardViewInternet.startAnimation(animation)
+                    }
                 }
             }
 
@@ -153,6 +188,9 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
 
 
     companion object {
+
+        //czy program jest gotowy
+        var ready = false
 
         //zmienna wskazująca na ostatni item w tablicy
         var lastItem = 0

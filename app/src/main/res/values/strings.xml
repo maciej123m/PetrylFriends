@@ -7,4 +7,5 @@
 
     <string name="login_text">Witaj!\nZaloguj się przez swoje konto google aby skorzystać z aplikacji!</string>
     <string name="login_with_google">Login with Google</string>
+    <string name="no_internet_connection">Brak internetu, sprawdź połączenie!</string>
 </resources>

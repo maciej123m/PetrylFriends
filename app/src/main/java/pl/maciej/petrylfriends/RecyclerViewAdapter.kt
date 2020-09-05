@@ -39,12 +39,19 @@ class RecyclerViewAdapter(val context: Context) : RecyclerView.Adapter<RecyclerV
     private val dataFormat = "E HH:mm"
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        //za wczasu ustawiam kolor tekstu (błędy w cachowaniu)
+        holder.view.findViewById<TextView>(R.id.textViewMain).setTextColor(context.getColor(R.color.text_color))
+
+
         //sprawdza czy lista niewysłanych wiadomości nie jest pusta, czy się zgadza token i czy jest element ten na liście niewysłanych wiadomości
         if (MainActivity.unSendMessage.count() != 0 && Messages[position].tokenID == MainActivity.mAuth.currentUser!!.uid && isOnList(position)) {
             //dodaje view do listy
             MainActivity.unSendMessage[0] = Pair<View,Int>(holder.view, position)
             holder.view.findViewById<TextView>(R.id.textViewMain).setTextColor(context.getColor(R.color.un_send_text_color))
         }
+
+        //ustawia gotowość na true
+        MainActivity.ready = true
 
         holder.view.findViewById<TextView>(R.id.nick).text = Messages[position].author
         val text = holder.view.findViewById<TextView>(R.id.textViewMain)
@@ -54,7 +61,7 @@ class RecyclerViewAdapter(val context: Context) : RecyclerView.Adapter<RecyclerV
         val formatter = SimpleDateFormat(dataFormat, Locale.getDefault())
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = Messages[position].time
-        holder.view.findViewById<TextView>(R.id.date).text = formatter.format(calendar.time)
+        holder.view.findViewById<TextView>(R.id.data).text = formatter.format(calendar.time)
 
         if (Messages[position].tokenID == MainActivity.mAuth.currentUser!!.uid) {
             holder.view.findViewById<ImageView>(R.id.avatarView).setImageBitmap(MainActivity.photo)

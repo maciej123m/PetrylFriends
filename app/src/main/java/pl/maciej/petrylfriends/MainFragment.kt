@@ -229,7 +229,7 @@ class MainFragment : Fragment() {
 
                             //podmień item
                             recyclerView.adapter!!.notifyItemChanged(item.second,item.first)
-                            try {
+                             try {
                                 //usuń z tablicy
                                 MainActivity.unSendMessage.removeAt(i)
                             } catch (e : ConcurrentModificationException) {
