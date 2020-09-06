@@ -1,9 +1,10 @@
 package pl.maciej.petrylfriends
 
 import android.os.Bundle
-import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.EditTextPreference
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 
 class SettingsActivity : AppCompatActivity() {
@@ -22,10 +23,18 @@ class SettingsActivity : AppCompatActivity() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
-            val a = preferenceManager.findPreference<EditTextPreference>("nick")
-            a?.text = MainActivity.mAuth.currentUser.toString()
-            a?.setOnPreferenceChangeListener { preference, newValue ->
-                Log.d("","")
+            val editTextPreference = preferenceManager.findPreference<EditTextPreference>("nick")
+            editTextPreference?.text = MainActivity.mAuth.currentUser!!.displayName.toString()
+            editTextPreference?.setOnPreferenceChangeListener { preference, newValue ->
+                MainActivity.changeNick(newValue.toString())
+
+            }
+
+            val logOutButton = preferenceManager.findPreference<Preference>("log_out")
+            logOutButton!!.setOnPreferenceClickListener {
+                MainActivity.mAuth.signOut()
+                Toast.makeText(context,getString(R.string.succes_log_out),Toast.LENGTH_SHORT).show()
+                requireActivity().finish()
                 true
             }
         }

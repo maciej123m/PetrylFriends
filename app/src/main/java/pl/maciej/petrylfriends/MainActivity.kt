@@ -14,6 +14,7 @@ import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
@@ -121,7 +122,11 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
     }
 
     fun startSettings() {
-       this.startActivity(Intent(this,SettingsActivity::class.java))
+        if (mAuth.currentUser != null) {
+            this.startActivity(Intent(this, SettingsActivity::class.java))
+        } else {
+            Toast.makeText(this,getString(R.string.log_in_info),Toast.LENGTH_SHORT).show()
+        }
     }
 
 
@@ -265,6 +270,69 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
 
             return bitmap!!
         }
+
+        //funkcja do zmiany nicku w google i w bazie
+        fun changeNick(newNick: String) : Boolean {
+
+            val text = newNick.trim()
+            if (text.isEmpty() ||
+                text.contains('#') ||
+                text.contains('.') ||
+                text.contains('[') ||
+                text.contains(']') ||
+                text.contains('$') ||
+                text.contains('/')
+            ) {
+                Toast.makeText(context,"Nick zawiera znaki których nie można używać (#.[]%/)",Toast.LENGTH_LONG).show()
+                return false
+            }
+
+            val oldNick = mAuth.currentUser!!.displayName
+
+            database.reference.child("user").orderByChild("nick")
+                .equalTo(mAuth.currentUser!!.displayName).addListenerForSingleValueEvent(object: ValueEventListener{
+                    override fun onCancelled(error: DatabaseError) {
+                        TODO("Dodaj błąd")
+                    }
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.childrenCount != 0L) {
+                            //1 element
+                            for (item in snapshot.children) {
+                                item.ref.child("nick").setValue(text)
+                            }
+                        }
+
+                    }
+
+                })
+
+            //builder aktualizacji
+            val builder = UserProfileChangeRequest.Builder().setDisplayName(newNick).build()
+
+            MainActivity.mAuth.currentUser!!.updateProfile(builder).addOnCompleteListener {
+                    task ->
+                //jeżeli update
+                if (task.isSuccessful) {
+                    //ustaw zapytanie
+                    MainActivity.database.reference.child("chat").
+                    orderByChild("author").
+                    equalTo(oldNick).addValueEventListener(object : ValueEventListener{
+                        override fun onCancelled(error: DatabaseError) {
+                            TODO("dodaj błąd")
+                        }
+
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            for (item in snapshot.children) {
+                                item.ref.child("author").setValue(newNick)
+                            }
+                        }
+
+                    })
+                }
+            }
+            return true
+        }
+
     }
 
     override fun onStartListener() {
