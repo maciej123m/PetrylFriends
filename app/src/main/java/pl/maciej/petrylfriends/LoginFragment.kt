@@ -15,11 +15,9 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 
@@ -153,7 +151,8 @@ class LoginFragment : Fragment() {
             updateUI()
             //start listenera
             listener.onStartListener()
-            findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+            //TODO("zrób update")
+            findNavController().navigate(R.id.action_loginFragment_to_startFragment)
         }.addOnFailureListener {
                 exception ->
                 Toast.makeText(context,"Próba logowania zakończona niepowodzeniem kod błędu: ${exception.message}",Toast.LENGTH_SHORT).show()

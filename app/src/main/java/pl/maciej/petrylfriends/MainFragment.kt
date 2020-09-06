@@ -12,16 +12,12 @@ import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.fragment_main.view.*
-import java.text.FieldPosition
 
 
 class MainFragment : Fragment() {
@@ -203,7 +199,7 @@ class MainFragment : Fragment() {
         }
         return -1
     }
-    object lock
+    
     private fun updateDatabase(message: Message, position : Int) {
         Thread(Runnable {
             val reference = MainActivity.database.reference.child("chat").push()

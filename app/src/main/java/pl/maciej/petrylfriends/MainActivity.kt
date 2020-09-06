@@ -1,27 +1,26 @@
 package pl.maciej.petrylfriends
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
-
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import java.io.BufferedInputStream
 import java.io.InputStream
-import java.lang.Exception
 
 class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
 
@@ -29,6 +28,7 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
     private val connectedRef by lazy {
         database.getReference(".info/connected")
     }
+
 
     private val connectedListener by lazy {
         (object : ValueEventListener {
@@ -90,7 +90,6 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        database.setPersistenceEnabled(true)
 
         super.onCreate(savedInstanceState)
 
@@ -113,11 +112,19 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
+         when (item.itemId) {
+            R.id.action_settings ->
+                startSettings()
             else -> super.onOptionsItemSelected(item)
         }
+        return false
     }
+
+    fun startSettings() {
+       this.startActivity(Intent(this,SettingsActivity::class.java))
+    }
+
+
     private val reference : DatabaseReference by lazy {
         database.reference.child("chat")
     }
@@ -177,8 +184,8 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
 
             //scrollowanie na ostatni dodany element
             if(lItem==lastItem) {
-                recyclerView.smoothScrollToPosition(lItem)
-                recyclerView.scheduleLayoutAnimation()
+                recyclerView?.smoothScrollToPosition(lItem)
+                recyclerView?.scheduleLayoutAnimation()
             }
         }
 
@@ -234,7 +241,10 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
             FirebaseDatabase.getInstance()
         }
 
-
+        //statyczny konstruktor
+        init {
+            database.setPersistenceEnabled(true)
+        }
 
 
         fun generateBitmap(url : String): Bitmap {
@@ -272,7 +282,7 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
                 for (item in snapshot.children) {
                     messages.add(item.getValue(Message::class.java)!!)
                 }
-                recyclerView.adapter!!.notifyDataSetChanged()
+                recyclerView?.adapter?.notifyDataSetChanged()
                 reference.removeEventListener(this)
                 reference.addChildEventListener(childEventListener)
             }
