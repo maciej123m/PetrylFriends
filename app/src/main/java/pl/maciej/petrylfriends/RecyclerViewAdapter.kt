@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -16,7 +17,6 @@ import java.io.BufferedInputStream
 import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class RecyclerViewAdapter(val context: Context) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
@@ -41,12 +41,35 @@ class RecyclerViewAdapter(val context: Context) : RecyclerView.Adapter<RecyclerV
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         //za wczasu ustawiam kolor tekstu (błędy w cachowaniu)
         holder.view.findViewById<TextView>(R.id.textViewMain).setTextColor(context.getColor(R.color.text_color))
+        var then : Long = 0
+        //długie przytrzymanie obiektu
+        holder.view.setOnTouchListener(object : View.OnTouchListener{
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+                if(event!!.action == MotionEvent.ACTION_DOWN){
+                    then = System.currentTimeMillis()
+                }
+                if(event.action == MotionEvent.ACTION_UP) {
+                    if( (System.currentTimeMillis() - then) > 1200) {
+                        //przekazuje pozycje
+
+                    }
+                }
+                return true
+            }
+        })
 
 
         //sprawdza czy lista niewysłanych wiadomości nie jest pusta, czy się zgadza token i czy jest element ten na liście niewysłanych wiadomości
-        if (MainActivity.unSendMessage.count() != 0 && Messages[position].tokenID == MainActivity.mAuth.currentUser!!.uid && isOnList(position)) {
+        if (MainActivity.unSendMessages.count() != 0 && Messages[position].tokenID == MainActivity.mAuth.currentUser!!.uid && isOnList(position)) {
+
             //dodaje view do listy
-            MainActivity.unSendMessage[0] = Pair<View,Int>(holder.view, position)
+            //iteruje tablice unSendMessages
+            for (i in 0 until MainActivity.unSendMessages.count()) {
+                //jeżeli pozycje się zgadzają to dodaje view
+                if (MainActivity.unSendMessages[i].second == position) {
+                    MainActivity.unSendMessages[i] = Pair<View,Int>(holder.view, position)
+                }
+            }
             holder.view.findViewById<TextView>(R.id.textViewMain).setTextColor(context.getColor(R.color.un_send_text_color))
         }
 
@@ -123,7 +146,7 @@ class RecyclerViewAdapter(val context: Context) : RecyclerView.Adapter<RecyclerV
     }
 
     fun isOnList(position: Int): Boolean {
-        for (item in MainActivity.unSendMessage) {
+        for (item in MainActivity.unSendMessages) {
             if (item.second == position) {
                 return true
             }

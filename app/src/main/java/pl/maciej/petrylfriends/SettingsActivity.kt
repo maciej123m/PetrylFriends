@@ -39,6 +39,8 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
+
+
         override fun onResume() {
             super.onResume()
         }

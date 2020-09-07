@@ -1,10 +1,8 @@
 <resources>
-    <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_view_margin">1.5dp</dimen>
-    <dimen name="margin_lef_send_button">4dp</dimen>
     <dimen name="nick_text_size">13sp</dimen>
     <dimen name="text_message_size">14sp</dimen>
     <dimen name="padding_text_view">20dp</dimen>
     <dimen name="margin_ImageView">5dp</dimen>
-    <dimen name="text_data_size">12sp</dimen>
+    <dimen name="text_data_size">10sp</dimen>
 </resources>

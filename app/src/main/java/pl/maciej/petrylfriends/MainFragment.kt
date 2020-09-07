@@ -35,6 +35,7 @@ class MainFragment : Fragment() {
 
         val recyclerView = view.findViewById(R.id.recyclerView) as RecyclerView
         recyclerView.setHasFixedSize(true)
+
         recyclerView.adapter = RecyclerViewAdapter(requireContext())
 
         //dodanie linearnego layoutu do wyświetlania wiadomości
@@ -64,7 +65,7 @@ class MainFragment : Fragment() {
         recyclerView.layoutManager = layoutManger
 
         //ustawianie cache dla wiadomości
-        //recyclerView.setItemViewCacheSize(20)
+        //recyclerView.setItemViewCacheSize(30)
 
         //pole wpisywania tekstu
         editText = view.findViewById(R.id.editText) as EditText
@@ -84,11 +85,12 @@ class MainFragment : Fragment() {
             //ustawia wiadomość jako niewysłana
             editText.text = null
 
-           glueToBottomRecyclerView()
+            glueToBottomRecyclerView()
         }
 
         //przycisk ma być ukryty na początku działania programu
         sendButton.visibility = View.GONE
+
         return view
     }
 
@@ -167,6 +169,10 @@ class MainFragment : Fragment() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+    }
+
     private fun glueToBottomRecyclerView()
     {
         //pobieranie ostatniego indexu z tablicy
@@ -190,7 +196,7 @@ class MainFragment : Fragment() {
             val pos = MainActivity.messages.count()-1
 
             //dodanie nieysłanej jeszcze wiadomości
-            MainActivity.unSendMessage.add(Pair(null,pos))
+            MainActivity.unSendMessages.add(Pair(null,pos))
 
             //update bazy
             updateDatabase(messageObject, MainActivity.messages.count())
@@ -208,7 +214,7 @@ class MainFragment : Fragment() {
                 if (task.isSuccessful) {
                     //jeżeli wysłano zaznaczenie wiadomości jako wysłana
 
-                    for ((i, item) in MainActivity.unSendMessage.withIndex()) {
+                    for ((i, item) in MainActivity.unSendMessages.withIndex()) {
                         if (position-1 == item.second) {
                             //do momentu aż view nie przyjdzie ma na niego oczekiwać
                             while(item.first==null) {
@@ -227,7 +233,7 @@ class MainFragment : Fragment() {
                             recyclerView.adapter!!.notifyItemChanged(item.second,item.first)
                              try {
                                 //usuń z tablicy
-                                MainActivity.unSendMessage.removeAt(i)
+                                MainActivity.unSendMessages.removeAt(i)
                             } catch (e : ConcurrentModificationException) {
                                 Log.d("TAG","wystąpił wyjątek")
                             }
@@ -244,5 +250,6 @@ class MainFragment : Fragment() {
             }
         }).start()
     }
+
 
 }

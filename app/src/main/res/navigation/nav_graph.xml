@@ -14,6 +14,9 @@
             app:destination="@id/loginFragment"
             app:popUpToInclusive="true"
             app:popUpTo="@+id/nav_graph" />
+        <action
+            android:id="@+id/action_mainFragment_to_bottomSheet"
+            app:destination="@id/bottomSheet" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -44,4 +47,10 @@
             app:popUpTo="@+id/nav_graph"
             app:popUpToInclusive="true" />
     </fragment>
+
+    <dialog
+        android:id="@+id/bottomSheet"
+        android:name="pl.maciej.petrylfriends.BottomNavigationDrawerFragment"
+        tools:layout="@layout/bottom_menu_layout" />
+
 </navigation>

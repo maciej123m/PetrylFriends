@@ -99,8 +99,10 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
         setSupportActionBar(toolbar)
         //tablica użytkowników
         cacheUser = ArrayList()
-        unSendMessage = ArrayList()
+        unSendMessages = ArrayList()
         context = this
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -138,7 +140,6 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
         super.onResume()
         if (mAuth.currentUser != null) {
             onStartListener()
-
             //odpowiada za to czy użytkownik jest offline czy online
             connectedRef.addValueEventListener(connectedListener)
         }
@@ -219,7 +220,7 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
         lateinit var cacheUser : ArrayList<UserData>
 
         //lista niewysłanych wiadomości (Widok, Pozycja)
-        lateinit var unSendMessage: ArrayList<Pair<View?,Int>>
+        lateinit var unSendMessages: ArrayList<Pair<View?,Int>>
 
         lateinit var context : Context
         //służy do kodowania url obrazka aby mógł wejść do firebase unikając znaków które nie mogą wejść
@@ -301,7 +302,6 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
                                 item.ref.child("nick").setValue(text)
                             }
                         }
-
                     }
 
                 })
@@ -309,12 +309,12 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
             //builder aktualizacji
             val builder = UserProfileChangeRequest.Builder().setDisplayName(newNick).build()
 
-            MainActivity.mAuth.currentUser!!.updateProfile(builder).addOnCompleteListener {
+            mAuth.currentUser!!.updateProfile(builder).addOnCompleteListener {
                     task ->
                 //jeżeli update
                 if (task.isSuccessful) {
                     //ustaw zapytanie
-                    MainActivity.database.reference.child("chat").
+                    database.reference.child("chat").
                     orderByChild("author").
                     equalTo(oldNick).addValueEventListener(object : ValueEventListener{
                         override fun onCancelled(error: DatabaseError) {
