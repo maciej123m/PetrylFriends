@@ -3,16 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/navItemOne"
-        android:title="Nav Item 1"
+        android:title="@string/copy_menu"
         app:showAsAction="never"/>
 
     <item
         android:id="@+id/navItemTwo"
-        android:title="Nav Item 2"
+        android:title="@string/delete_menu"
         app:showAsAction="never"/>
 
-    <item
-        android:id="@+id/navItemThree"
-        android:title="Nav Item 3"
-        app:showAsAction="never"/>
 </menu>

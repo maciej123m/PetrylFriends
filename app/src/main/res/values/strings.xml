@@ -23,5 +23,7 @@
     <string name="hint_set_nick">nick</string>
     <string name="succes_log_out">Pomyślnie wylogowano</string>
     <string name="log_in_info">Zaloguj się</string>
+    <string name="copy_menu">Kopiuj</string>
+    <string name="delete_menu">usuń</string>
 
 </resources>

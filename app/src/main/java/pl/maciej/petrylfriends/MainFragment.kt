@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.fragment_main.view.*
 
 
-class MainFragment : Fragment() {
+class MainFragment : Fragment(), RecyclerViewAdapter.onClickItem {
 
     private lateinit var editText : EditText
     private lateinit var sendButton : ImageButton
@@ -36,7 +36,7 @@ class MainFragment : Fragment() {
         val recyclerView = view.findViewById(R.id.recyclerView) as RecyclerView
         recyclerView.setHasFixedSize(true)
 
-        recyclerView.adapter = RecyclerViewAdapter(requireContext())
+        recyclerView.adapter = RecyclerViewAdapter(requireContext(),this)
 
         //dodanie linearnego layoutu do wyświetlania wiadomości
         val layoutManger = LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false)
@@ -251,5 +251,16 @@ class MainFragment : Fragment() {
         }).start()
     }
 
+    override fun onclickMessage(position: Int) {
+        findNavController().navigate(R.id.action_mainFragment_to_bottomSheet)
+    }
 
+    override fun onclickAvatar(TokenID: String) {
+        TODO("Not yet implemented")
+    }
+
+    //listener do kliknięcia dymka chatu
+
+
+    //listener do kliknięcia avataru
 }

@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -19,9 +18,15 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class RecyclerViewAdapter(val context: Context) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
+class RecyclerViewAdapter(val context: Context, val listener: onClickItem) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>(){
 
-    class ViewHolder(val view : View) : RecyclerView.ViewHolder(view)
+    interface onClickItem
+    {
+        fun onclickMessage(position: Int)
+        fun onclickAvatar(TokenID : String)
+    }
+
+    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
 
     var Messages : ArrayList<Message> = MainActivity.messages
 
@@ -40,24 +45,14 @@ class RecyclerViewAdapter(val context: Context) : RecyclerView.Adapter<RecyclerV
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         //za wczasu ustawiam kolor tekstu (błędy w cachowaniu)
-        holder.view.findViewById<TextView>(R.id.textViewMain).setTextColor(context.getColor(R.color.text_color))
-        var then : Long = 0
-        //długie przytrzymanie obiektu
-        holder.view.setOnTouchListener(object : View.OnTouchListener{
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                if(event!!.action == MotionEvent.ACTION_DOWN){
-                    then = System.currentTimeMillis()
-                }
-                if(event.action == MotionEvent.ACTION_UP) {
-                    if( (System.currentTimeMillis() - then) > 1200) {
-                        //przekazuje pozycje
+        val text = holder.view.findViewById<TextView>(R.id.textViewMain)
+        text.setTextColor(context.getColor(R.color.text_color))
 
-                    }
-                }
-                return true
-            }
-        })
-
+        text.isLongClickable = true
+        text.setOnLongClickListener {
+            listener.onclickMessage(position)
+            return@setOnLongClickListener true
+        }
 
         //sprawdza czy lista niewysłanych wiadomości nie jest pusta, czy się zgadza token i czy jest element ten na liście niewysłanych wiadomości
         if (MainActivity.unSendMessages.count() != 0 && Messages[position].tokenID == MainActivity.mAuth.currentUser!!.uid && isOnList(position)) {
@@ -77,7 +72,7 @@ class RecyclerViewAdapter(val context: Context) : RecyclerView.Adapter<RecyclerV
         MainActivity.ready = true
 
         holder.view.findViewById<TextView>(R.id.nick).text = Messages[position].author
-        val text = holder.view.findViewById<TextView>(R.id.textViewMain)
+
         text.text = Messages[position].message
 
         //ustawianie daty
