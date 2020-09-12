@@ -25,5 +25,6 @@
     <string name="log_in_info">Zaloguj się</string>
     <string name="copy_menu">Kopiuj</string>
     <string name="delete_menu">usuń</string>
+    <string name="edit_menu">Edytuj</string>
 
 </resources>

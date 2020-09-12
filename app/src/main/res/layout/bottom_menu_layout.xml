@@ -1,48 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottomSheetLayout"
     android:layout_width="match_parent"
+    android:orientation="vertical"
     android:layout_height="wrap_content"
-    app:behavior_peekHeight="90dp"
-    app:layout_behavior="@string/bottom_sheet_behavior">
+    app:layout_behavior="@string/bottom_sheet_behavior"
+    app:behavior_hideable="false"
+    app:behavior_peekHeight="0dp">
 
-
-    <LinearLayout
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:background="@drawable/bottom_dialog_shape"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <Button
-            android:id="@+id/textView3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:fontFamily="@font/raleway_extrabold"
-            android:text="@string/copy_menu"
-            android:textAlignment="center"
-            android:textSize="20sp"
-            android:layout_marginTop="5dp"
-            android:textStyle="bold"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            />
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        app:itemIconTint="@color/text_and_icon_bottom_dialog_color"
+        app:itemTextColor="@android:color/white"
+        app:menu="@menu/bottom_menu"/>
 
-        <Button
-            android:id="@+id/tx4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:background="@android:color/white"
-            android:clickable="true"
-            android:focusable="true"
-            android:fontFamily="@font/raleway_extrabold"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:text="@string/delete_menu"
-            android:textAlignment="center"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" />
-    </LinearLayout>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

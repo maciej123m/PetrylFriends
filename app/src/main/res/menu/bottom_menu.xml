@@ -2,13 +2,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/navItemOne"
+        android:id="@+id/copyItem"
         android:title="@string/copy_menu"
-        app:showAsAction="never"/>
+        app:showAsAction="never"
+        android:icon="@drawable/ic_content_copy_24dp"/>
 
     <item
-        android:id="@+id/navItemTwo"
+        android:id="@+id/deleteItem"
         android:title="@string/delete_menu"
-        app:showAsAction="never"/>
+        app:showAsAction="never"
+        android:icon="@drawable/ic_delete_24dp"/>
+
+    <item
+        android:id="@+id/editItem"
+        android:title="@string/edit_menu"
+        app:showAsAction="never"
+        android:icon="@drawable/ic_edit_24dp"/>
 
 </menu>

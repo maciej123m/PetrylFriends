@@ -12,4 +12,7 @@
     <color name="background_message_color">#292B2B</color>
     <color name="EditText_color">#44474A</color>
     <color name="send_button_color">#88888E</color>
+    <color name="background_bottom_dialog_color">#353B3C</color>
+    <color name="text_and_icon_bottom_dialog_color">#E6E6E6</color>
+
 </resources>

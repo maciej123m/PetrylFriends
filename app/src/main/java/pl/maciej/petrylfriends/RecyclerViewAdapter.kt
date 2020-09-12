@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.DataSnapshot
@@ -47,6 +48,26 @@ class RecyclerViewAdapter(val context: Context, val listener: onClickItem) : Rec
         //za wczasu ustawiam kolor tekstu (błędy w cachowaniu)
         val text = holder.view.findViewById<TextView>(R.id.textViewMain)
         text.setTextColor(context.getColor(R.color.text_color))
+
+        /*//główny pojemnik wiadomości
+        val ll = holder.view.findViewById<LinearLayout>(R.id.mainBox)
+
+        //jeżeli mineło dłużej niż 5 minut ma ustawić wartość na true czyli pokazać obrazek
+        val boolTime = position != 0 && Messages[position].time - Messages[position-1].time > 300000
+
+        //ustawianie widzialności obrazka, jeżeli poprzednia wiadomość miała tego samego autora
+        //lub mineło krócej niż 5 minut i nie jest to pierwsza wiadomość schowaj razem z nickiem
+        //inaczej pokaż i nick i obrazek
+        if (position != 0 && Messages[position - 1].author == Messages[position].author && !boolTime) {
+            holder.view.findViewById<LinearLayout>(R.id.nickAndTimell).visibility = View.GONE
+            holder.view.findViewById<ImageView>(R.id.avatarView).visibility = View.GONE
+            setMargins(ll,57,0,0,0)
+
+        } else {
+            setMargins(ll,5,0,0,0)
+            holder.view.findViewById<LinearLayout>(R.id.nickAndTimell).visibility = View.VISIBLE
+            holder.view.findViewById<ImageView>(R.id.avatarView).visibility = View.VISIBLE
+        }*/
 
         text.isLongClickable = true
         text.setOnLongClickListener {
@@ -90,6 +111,10 @@ class RecyclerViewAdapter(val context: Context, val listener: onClickItem) : Rec
                     return
                 }
             }
+
+
+
+            //DALEJ TO PIERWSZE łADOWANIE UżYTKOWNIKA
 
             val inputStream : InputStream = MainActivity.context.assets!!.open("img/error.jpg")
             //tworzenie streama
@@ -158,5 +183,30 @@ class RecyclerViewAdapter(val context: Context, val listener: onClickItem) : Rec
 
         //dekodowanie do bitmapy
         return BitmapFactory.decodeStream(bStream)
+    }
+
+    private fun setMargins(
+        view: LinearLayout,
+        left: Int,
+        top: Int,
+        right: Int,
+        bottom: Int
+    ) {
+
+        val params = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+
+        val scale: Float = context.resources.displayMetrics.density
+        // convert the DP into pixel
+        val l = (left * scale + 0.5f).toInt()
+        val r = (right * scale + 0.5f).toInt()
+        val t = (top * scale + 0.5f).toInt()
+        val b = (bottom * scale + 0.5f).toInt()
+        params.setMargins(l,t,r,b)
+        view.layoutParams = params
+        view.requestLayout()
+
     }
 }

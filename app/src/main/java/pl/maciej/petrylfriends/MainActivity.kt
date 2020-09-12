@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -22,6 +23,7 @@ import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import java.io.BufferedInputStream
 import java.io.InputStream
+
 
 class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
 
@@ -164,14 +166,28 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
         }
 
         override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+            for((i, item) in messages.withIndex())
+            {
+                if(item.key == snapshot.key) {
+                    val newItem = snapshot.getValue(Message::class.java)!!
+                    newItem.key = snapshot.key
+                    messages[i] = newItem
+                    recyclerView.adapter?.notifyItemChanged(i)
+                    return
+                }
+            }
+            Log.d("ss","ss")
         }
 
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             var pos  = 0
             try {
                 val item = snapshot.getValue(Message::class.java)!!
+                item.key = snapshot.key!!
                 for (message in messages) {
                     if(message.tokenID == item.tokenID && message.time == item.time) {
+                        if (message.key == null)
+                            message.key = item.key
                         return
                     }
                 }
@@ -196,6 +212,15 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
         }
 
         override fun onChildRemoved(snapshot: DataSnapshot) {
+            for((i, item) in messages.withIndex())
+            {
+                if(item.key == snapshot.key) {
+                    messages.removeAt(i)
+                    recyclerView.adapter?.notifyItemRemoved(i)
+                    return
+                }
+            }
+            Log.d("ss","ss")
         }
     })
 
@@ -249,7 +274,7 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
 
         //statyczny konstruktor
         init {
-            database.setPersistenceEnabled(true)
+            //database.setPersistenceEnabled(true)
         }
 
 
@@ -270,6 +295,14 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
             }
 
             return bitmap!!
+        }
+
+        fun convertPixelsToDp(
+            px: Float,
+            context: Context
+        ): Float {
+            return px / (context.resources
+                .displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
         }
 
         //funkcja do zmiany nicku w google i w bazie
