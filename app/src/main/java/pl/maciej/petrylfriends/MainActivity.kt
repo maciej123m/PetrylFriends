@@ -23,6 +23,12 @@ import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import java.io.BufferedInputStream
 import java.io.InputStream
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.MutableMap
+import kotlin.collections.count
+import kotlin.collections.set
+import kotlin.collections.withIndex
 
 
 class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
@@ -85,9 +91,7 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
                     }
                 }
             }
-
         })
-
     }
 
 
@@ -103,7 +107,6 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
         cacheUser = ArrayList()
         unSendMessages = ArrayList()
         context = this
-
 
     }
 
@@ -216,7 +219,10 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
             {
                 if(item.key == snapshot.key) {
                     messages.removeAt(i)
-                    recyclerView.adapter?.notifyItemRemoved(i)
+                    recyclerView?.adapter?.notifyItemRemoved(i)
+                    for (j in i until messages.size) { //TODO("wymysl może coś lepszego")
+                        recyclerView?.adapter?.notifyItemChanged(j)
+                    }
                     return
                 }
             }
@@ -248,6 +254,10 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
         lateinit var unSendMessages: ArrayList<Pair<View?,Int>>
 
         lateinit var context : Context
+
+        //serwis kopiowania itemów
+        val CLIPBOARD_SERVICE = Context.CLIPBOARD_SERVICE
+
         //służy do kodowania url obrazka aby mógł wejść do firebase unikając znaków które nie mogą wejść
         fun encode(data: String) : String {
             var output : String = data.replace(".","1x2")
@@ -264,7 +274,7 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
             return output
         }
 
-        val mAuth by lazy {
+        val mAuth: FirebaseAuth by lazy {
             FirebaseAuth.getInstance()
         }
 
@@ -285,7 +295,7 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
                 Picasso.get().load(url).resize(65,65).get()
             } catch (e: Exception) {
                 //pobieranie zdjęcia
-                val inputStream : InputStream = context.assets!!.open("img/error.jpg")
+                val inputStream : InputStream = context.assets!!.open("img/er.jpg")
 
                 //tworzenie streama
                 val bStream =  BufferedInputStream(inputStream)
@@ -364,6 +374,15 @@ class MainActivity : AppCompatActivity(), LoginFragment.onStartListeren {
                 }
             }
             return true
+        }
+
+        fun sendNotificationToUser(user: String, message: String) {
+            val ref = database.reference
+            val notifications = ref.child("notificationRequests")
+            val notification : MutableMap<String,String> = HashMap()
+            notification["username"] = user
+            notification["message"] = message
+            notifications.push().setValue(notification)
         }
 
     }

@@ -19,4 +19,10 @@
         app:showAsAction="never"
         android:icon="@drawable/ic_edit_24dp"/>
 
+    <item
+        android:id="@+id/profileItem"
+        android:title="@string/profil_menu"
+        app:showAsAction="never"
+        android:icon="@drawable/ic_avatar_circle_orange_24dp"/>
+
 </menu>

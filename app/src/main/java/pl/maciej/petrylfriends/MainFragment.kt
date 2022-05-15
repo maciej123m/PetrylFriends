@@ -94,7 +94,6 @@ class MainFragment : Fragment(), RecyclerViewAdapter.onClickItem {
         return view
     }
 
-
     //obiekty interfejsu textWatcher
     lateinit var animator : Animation
     val textWatcher : TextWatcher = (object : TextWatcher{
@@ -252,7 +251,12 @@ class MainFragment : Fragment(), RecyclerViewAdapter.onClickItem {
     }
 
     override fun onclickMessage(position: Int) {
-        findNavController().navigate(R.id.action_mainFragment_to_bottomSheet)
+        val bundle = Bundle()
+        //sprawdzanie czy jest dobra pozycja wiadomości (nieraz się psuje) TODO("NIE DZIALA")
+
+        bundle.putInt("position", position)
+        bundle.putBoolean("my", MainActivity.messages[position].author == MainActivity.mAuth.currentUser!!.displayName)
+        findNavController().navigate(R.id.action_mainFragment_to_bottomSheet, bundle)
     }
 
     override fun onclickAvatar(TokenID: String) {

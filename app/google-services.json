@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "407260782650",
+    "firebase_url": "https://petrylfriends.firebaseio.com",
+    "project_id": "petrylfriends",
+    "storage_bucket": "petrylfriends.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:407260782650:android:377a217f2f596af8e15503",
+        "android_client_info": {
+          "package_name": "pl.maciej.petrylfriends"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "407260782650-vs4vri3bhgg2j0uo745s4b9246anb7qb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pl.maciej.petrylfriends",
+            "certificate_hash": "d29cd5db5413e3369b1ab7917ba23887480c5707"
+          }
+        },
+        {
+          "client_id": "407260782650-ed2kctnb6n3nb2sq20e4katr9cgq3ld4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdTOHT_3dQFsdbNKz7QJihMDv1Lw3zjcY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "407260782650-ed2kctnb6n3nb2sq20e4katr9cgq3ld4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

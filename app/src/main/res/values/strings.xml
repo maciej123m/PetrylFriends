@@ -26,5 +26,8 @@
     <string name="copy_menu">Kopiuj</string>
     <string name="delete_menu">usuń</string>
     <string name="edit_menu">Edytuj</string>
+    <string name="profil_menu">profil</string>
+    <string name="copied">Skopiowano</string>
+    <string name="error_delete_message">Nie udało się usunąć wiadomości</string>
 
 </resources>

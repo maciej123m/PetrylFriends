@@ -27,6 +27,7 @@
             android:textAlignment="center" />
 
     </androidx.cardview.widget.CardView>
+
     <androidx.fragment.app.FragmentContainerView
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:id="@+id/FragmentContainerView"

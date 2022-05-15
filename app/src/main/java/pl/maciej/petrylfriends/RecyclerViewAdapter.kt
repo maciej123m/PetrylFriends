@@ -3,6 +3,7 @@ package pl.maciej.petrylfriends
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +27,6 @@ class RecyclerViewAdapter(val context: Context, val listener: onClickItem) : Rec
         fun onclickMessage(position: Int)
         fun onclickAvatar(TokenID : String)
     }
-
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
 
     var Messages : ArrayList<Message> = MainActivity.messages
@@ -45,9 +45,20 @@ class RecyclerViewAdapter(val context: Context, val listener: onClickItem) : Rec
     private val dataFormat = "E HH:mm"
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        //za wczasu ustawiam kolor tekstu (błędy w cachowaniu)
+
+        //avatar użytkownika obcego
+        val avatarImageView = holder.view.findViewById<ImageView>(R.id.avatarView)
+
+        //avatar użytkownka
+        val myAvatarImageView = holder.view.findViewById<ImageView>(R.id.myAvatarView)
+
+        val box = holder.view.findViewById<LinearLayout>(R.id.mainBox)
+
+        //nick
+        val nickText = holder.view.findViewById<TextView>(R.id.nick)
+
+        //tekst główny
         val text = holder.view.findViewById<TextView>(R.id.textViewMain)
-        text.setTextColor(context.getColor(R.color.text_color))
 
         /*//główny pojemnik wiadomości
         val ll = holder.view.findViewById<LinearLayout>(R.id.mainBox)
@@ -60,16 +71,16 @@ class RecyclerViewAdapter(val context: Context, val listener: onClickItem) : Rec
         //inaczej pokaż i nick i obrazek
         if (position != 0 && Messages[position - 1].author == Messages[position].author && !boolTime) {
             holder.view.findViewById<LinearLayout>(R.id.nickAndTimell).visibility = View.GONE
-            holder.view.findViewById<ImageView>(R.id.avatarView).visibility = View.GONE
+            avatarImageView.visibility = View.GONE
             setMargins(ll,57,0,0,0)
 
         } else {
             setMargins(ll,5,0,0,0)
             holder.view.findViewById<LinearLayout>(R.id.nickAndTimell).visibility = View.VISIBLE
-            holder.view.findViewById<ImageView>(R.id.avatarView).visibility = View.VISIBLE
+            avatarImageView.visibility = View.VISIBLE
         }*/
 
-        text.isLongClickable = true
+        text.isLongClickable = true //TODO("NIE DZIALA")
         text.setOnLongClickListener {
             listener.onclickMessage(position)
             return@setOnLongClickListener true
@@ -92,7 +103,7 @@ class RecyclerViewAdapter(val context: Context, val listener: onClickItem) : Rec
         //ustawia gotowość na true
         MainActivity.ready = true
 
-        holder.view.findViewById<TextView>(R.id.nick).text = Messages[position].author
+        nickText.text = Messages[position].author
 
         text.text = Messages[position].message
 
@@ -103,66 +114,96 @@ class RecyclerViewAdapter(val context: Context, val listener: onClickItem) : Rec
         holder.view.findViewById<TextView>(R.id.data).text = formatter.format(calendar.time)
 
         if (Messages[position].tokenID == MainActivity.mAuth.currentUser!!.uid) {
-            holder.view.findViewById<ImageView>(R.id.avatarView).setImageBitmap(MainActivity.photo)
+            //zamiana obrazków
+            myAvatarImageView.visibility = View.VISIBLE
+            avatarImageView.visibility = View.GONE
+
+            //zamiana stron boxa
+            box.gravity = Gravity.RIGHT
+            //zamiana tła
+            text.setBackgroundResource(R.drawable.my_item_background)
+            //zamiana koloru tekstu
+            //text.setTextColor(context.resources.getColor(R.color.my_text_color))
+
+            //chowanie nicku
+            nickText.visibility = View.GONE
+
+            myAvatarImageView.setImageBitmap(MainActivity.photo)
         } else {
+            //zamiana obrazków
+            myAvatarImageView.visibility = View.GONE
+            avatarImageView.visibility = View.VISIBLE
+            //zamiana stron boxa
+            box.gravity = Gravity.LEFT
+            //zamiana tła
+            text.setBackgroundResource(R.drawable.item_background)
+            //zamiana koloru tekstu
+            text.setTextColor(context.resources.getColor(R.color.text_color))
+
+            //pokazanie nicku
+            nickText.visibility = View.VISIBLE
+
             for (user in MainActivity.cacheUser) {
                 if (Messages[position].tokenID == user.tokenID) {
-                    holder.view.findViewById<ImageView>(R.id.avatarView).setImageBitmap(user.avatar)
+                    avatarImageView.setImageBitmap(user.avatar)
                     return
                 }
             }
 
-
-
-            //DALEJ TO PIERWSZE łADOWANIE UżYTKOWNIKA
-
-            val inputStream : InputStream = MainActivity.context.assets!!.open("img/error.jpg")
-            //tworzenie streama
-            val bStream =  BufferedInputStream(inputStream)
-            //dekodowanie do bitmapy
-            val b = BitmapFactory.decodeStream(bStream)
-            holder.view.findViewById<ImageView>(R.id.avatarView).setImageBitmap(b)
-
-            var user : UserData? = null
-            MainActivity.database.reference.child("user").
-            orderByChild("tokenID").
-            equalTo(Messages[position].tokenID).
-            limitToFirst(1).addListenerForSingleValueEvent(object : ValueEventListener{
-                override fun onCancelled(error: DatabaseError) {
-
-                    //wczytanie domyślnego avatara
-                    holder.view.findViewById<ImageView>(R.id.avatarView).setImageBitmap(loadDefaultAvatar())
-                    //TODO("brak dostępu do bazy, użytkownik zalogowany? - nie możliwe")
-                }
-
-                override fun onDataChange(snapshot: DataSnapshot) {
-
-                    //jeżeli jest użytkownik którego nie ma w bazie
-                    if (snapshot.childrenCount == 0L) {
-                        holder.view.findViewById<ImageView>(R.id.avatarView).setImageBitmap(loadDefaultAvatar())
-                        return
-                    }
-
-                    //wyciągam z dziecka snapshota wartości do user
-                    for (child in snapshot.children) {
-                        user = child.getValue(UserData::class.java)
-                    }
-                    user!!.photo = MainActivity.decode(user!!.photo)
-                    user!!.loadAvatar()
-                    holder.view.findViewById<ImageView>(R.id.avatarView).setImageBitmap(user!!.avatar)
-                    notifyItemChanged(position)
-                    var i=0
-                    for (tUser in MainActivity.cacheUser) {
-                        if (Messages[position].tokenID == tUser.tokenID) {
-                            i++
-                        }
-                    }
-                    if (i == 0) {
-                        MainActivity.cacheUser.add(user!!)
-                    }
-                }
-            })
+            //DALEJ TO PIERWSZE łADOWANIE UżYTKOWNIKA DO CACHE
+            FirstLoading(avatarImageView,position)
         }
+    }
+
+    //funkcja odpowiadająca za prierzwsze ładowanie
+    private fun FirstLoading(avatarImageView : ImageView, position: Int) {
+        val inputStream : InputStream = MainActivity.context.assets!!.open("img/er.jpg")
+        //tworzenie streama
+        val bStream =  BufferedInputStream(inputStream)
+        //dekodowanie do bitmapy
+        val b = BitmapFactory.decodeStream(bStream)
+        avatarImageView.setImageBitmap(b)
+
+        var user : UserData? = null
+        MainActivity.database.reference.child("user").
+        orderByChild("tokenID").
+        equalTo(Messages[position].tokenID).
+        limitToFirst(1).addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onCancelled(error: DatabaseError) {
+
+                //wczytanie domyślnego avatara
+                avatarImageView.setImageBitmap(loadDefaultAvatar())
+                //TODO("brak dostępu do bazy, użytkownik zalogowany? - nie możliwe")
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                //jeżeli jest użytkownik którego nie ma w bazie
+                if (snapshot.childrenCount == 0L) {
+                    avatarImageView.setImageBitmap(loadDefaultAvatar())
+                    return
+                }
+
+                //wyciągam z dziecka snapshota wartości do user
+                for (child in snapshot.children) {
+                    user = child.getValue(UserData::class.java)
+                }
+                user!!.photo = MainActivity.decode(user!!.photo)
+                user!!.loadAvatar()
+                var i=0
+                for (tUser in MainActivity.cacheUser) {
+                    if (Messages[position].tokenID == tUser.tokenID) {
+                        i++
+                    }
+                }
+                if (i == 0) {
+                    MainActivity.cacheUser.add(user!!)
+                }
+
+                avatarImageView.setImageBitmap(user!!.avatar)
+                notifyItemChanged(position)
+            }
+        })
     }
 
     fun isOnList(position: Int): Boolean {
@@ -176,7 +217,7 @@ class RecyclerViewAdapter(val context: Context, val listener: onClickItem) : Rec
 
     fun loadDefaultAvatar() : Bitmap
     {
-        val inputStream : InputStream = MainActivity.context.assets!!.open("img/error.jpg")
+        val inputStream : InputStream = MainActivity.context.assets!!.open("img/er.jpg")
 
         //tworzenie streama
         val bStream =  BufferedInputStream(inputStream)

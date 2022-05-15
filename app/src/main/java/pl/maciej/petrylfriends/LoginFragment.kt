@@ -19,6 +19,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.messaging.FirebaseMessaging
 
 
 class LoginFragment : Fragment() {
@@ -39,13 +40,22 @@ class LoginFragment : Fragment() {
         if (MainActivity.mAuth.currentUser != null) {
             //jeżeli tak ogarnia UI i przechodzi do main
             updateUI()
-            findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+            //findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
         }
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (MainActivity.mAuth.currentUser != null)
+            findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+
+    }
+
 
     fun updateDatabase()
     {
         var isBase = true
+        var exit = false
         MainActivity.database.reference.child("user").
         orderByChild("tokenID").
         equalTo(MainActivity.mAuth.currentUser!!.uid).
@@ -54,16 +64,22 @@ class LoginFragment : Fragment() {
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
-                if(snapshot.childrenCount==0L)
+                if (snapshot.childrenCount == 0L) {
                     isBase = false
-                else
+                } else {
+                    exit = true
                     return
+                }
+
             }
 
         })
 
         while(isBase) {
             Thread.sleep(50)
+            if (exit) {
+                return
+            }
         }
         //deklaracja tabeli
         val reference = MainActivity.database.reference.child("user").push()
@@ -95,6 +111,15 @@ class LoginFragment : Fragment() {
     {
         MainActivity.userName = MainActivity.mAuth.currentUser!!.displayName.toString()
 
+        //user_${mAuth.currentUser!!.displayName}
+        FirebaseMessaging.getInstance().subscribeToTopic("mess")
+            .addOnCompleteListener{
+                    task ->
+                if (!task.isSuccessful) {
+                    Toast.makeText(context, "nie udało się zasubskrybować", Toast.LENGTH_SHORT).show()
+                }
+            }
+
         Thread(Runnable {
             //pobieranie zdjęcia
             MainActivity.photo =
@@ -121,7 +146,9 @@ class LoginFragment : Fragment() {
         //start aktywności (okienka logowania) wszystko leci do onActivityResult
         val intent = mgoogleSingInClient.signInIntent
         startActivityForResult(intent,RC_SIGN_IN)
+
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -158,6 +185,7 @@ class LoginFragment : Fragment() {
                 Toast.makeText(context,"Próba logowania zakończona niepowodzeniem kod błędu: ${exception.message}",Toast.LENGTH_SHORT).show()
             }
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -170,6 +198,7 @@ class LoginFragment : Fragment() {
         button.setOnClickListener {
             login()
         }
+
         return view
     }
 

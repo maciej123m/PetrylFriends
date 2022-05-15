@@ -1,18 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3B3E43</color>
-    <color name="colorPrimaryDark">#2D2F32</color>
-    <color name="colorAccent">#808080</color>
+    <color name="colorPrimary">#273051</color>
+    <color name="colorPrimaryDark">#202742</color>
+    <color name="colorAccent">#427EFF</color>
 
-    <color name="background_color">#323B3D</color>
-    <color name="text_color">#F2F2F2</color>
-    <color name="un_send_text_color">#656565</color>
+    <!--kolory tła aplikacji-->
+    <color name="background_color">#273051</color>
+
+    <!--kolor nicku-->
     <color name="text_nick_color">#7A7A7A</color>
     <color name="hint_text">#777777</color>
-    <color name="background_message_color">#292B2B</color>
-    <color name="EditText_color">#44474A</color>
+
+    <!--kolory wiadomości mojej i kogoś-->
+    <color name="background_my_message_color">#58bc90</color>
+    <color name="background_message_color">#323a59</color>
+
+    <!--kolor czcionki wiadomości mojej i kogoś-->
+    <color name="my_text_color">#0d1613</color>
+    <color name="text_color">#F2F2F2</color>
+
+    <!--kolor wiadomości niewysłanej-->
+    <color name="un_send_text_color">#656565</color>
+
+    <!--kolory panelu na dole-->
+    <color name="EditText_color">#2c3352</color>
     <color name="send_button_color">#88888E</color>
-    <color name="background_bottom_dialog_color">#353B3C</color>
+
+
+    <color name="background_bottom_dialog_color">#1D263A</color>
     <color name="text_and_icon_bottom_dialog_color">#E6E6E6</color>
 
 </resources>

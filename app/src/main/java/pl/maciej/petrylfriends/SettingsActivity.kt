@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.google.firebase.messaging.FirebaseMessaging
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -34,6 +35,7 @@ class SettingsActivity : AppCompatActivity() {
             logOutButton!!.setOnPreferenceClickListener {
                 MainActivity.mAuth.signOut()
                 Toast.makeText(context,getString(R.string.succes_log_out),Toast.LENGTH_SHORT).show()
+                FirebaseMessaging.getInstance().unsubscribeFromTopic("mess")
                 requireActivity().finish()
                 true
             }
